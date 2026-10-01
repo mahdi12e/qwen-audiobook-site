@@ -131,8 +131,7 @@ function joinWavs(buffers){
  const total=parsed.reduce((a,x)=>a+x.data.reduce((s,d)=>s+d.length,0),0);
  const out=new Uint8Array(44+total), v=new DataView(out.buffer);
  const u32=(p,x)=>v.setUint32(p,x,true),u16=(p,x)=>v.setUint16(p,x,true);
- out.set(new TextEncoder().encode("RIFF"),0);u32(4,36+total);out.set(new TextEncoder().encode("WAVE"),8);out.set(new TextEncoder().encode("fmt "),12);u32(16,fmt.length);out.set(fmt,20);
- if(fmt.length>=16){u16(20+14,0); /* no-op: fmt bytes remain untouched */}
+ out.set(new TextEncoder().encode("RIFF"),0);u32(4,20+fmt.length+total);out.set(new TextEncoder().encode("WAVE"),8);out.set(new TextEncoder().encode("fmt "),12);u32(16,fmt.length);out.set(fmt,20);
  out.set(new TextEncoder().encode("data"),20+fmt.length);u32(24+fmt.length,total);
  let pos=28+fmt.length;for(const x of parsed)for(const d of x.data){out.set(d,pos);pos+=d.length}
  return new Blob([out],{type:"audio/wav"});
